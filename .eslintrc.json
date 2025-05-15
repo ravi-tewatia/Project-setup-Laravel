@@ -1,0 +1,18 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "standard"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2021
+    },
+    "rules": {
+        "brace-style" : "off",
+        "indent": ["error", 4],
+        "semi": [2, "always"]
+    },
+    "ignorePatterns": ["**/public/js/*.js", "**/public/css/*.css"]
+}

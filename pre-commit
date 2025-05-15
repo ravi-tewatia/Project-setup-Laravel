@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# php files that are staged in git but not deleted
+
+PHP_FILES=$(git diff --diff-filter=d --cached --name-only | grep -E '\.php$')
+JS_FILES=$(git diff --diff-filter=d --cached --name-only | grep -E '\.js$')
+CSS_FILES=$(git diff --diff-filter=d --cached --name-only | grep -E '\.css$')
+
+is_there_error=0
+
+################## PHP
+
+is_php_file=0
+for file in $PHP_FILES
+do
+	if [ $is_php_file = 0 ]; then
+		echo 
+		echo "================================================================================================"
+		echo
+		echo "-------------- PHP Start -------"
+		echo
+		echo "Running Code Sniffer For PHP." 
+		echo "Code standard PSR2."
+		echo
+	fi
+	echo $file
+	is_php_file=1
+	phpcs --standard=PSR2 --encoding=utf-8 -ignore=*/migrations/* -n -p $file
+	if [ $? -ne 0 ]; then
+		echo "Fix the error before commit please"
+		echo "Press \"alt+shift+f\" in your file for automatic fix in VS Code"
+		is_there_error=1
+		#exit 1 # exit with failure status
+	fi
+done
+
+if [ $is_php_file = 1 ]; then
+	echo
+	echo "-------------- PHP END---------"
+fi
+
+################## JS
+is_js_file=0
+for file in $JS_FILES
+do
+	if [ $is_js_file = 0 ]; then
+		echo
+		echo "================================================================================================"
+		echo
+		echo "-------------- JS Start--------"
+		echo
+	fi
+	is_js_file=1
+	echo $file
+	eslint $file
+	if [ $? -ne 0 ]; then
+		is_there_error=1
+		#exit 1 # exit with failure status
+	fi
+done
+
+if [ $is_js_file = 1 ]; then
+	echo
+	echo "-------------- JS END---------"
+fi
+
+################## CSS
+#is_css_file=0
+#for file in $CSS_FILES
+#do
+#	if [ $is_css_file = 0 ]; then
+#		echo
+#		echo "================================================================================================"
+#		echo
+#		echo "-------------- CSS Start--------"
+#		echo
+#	fi
+#	is_css_file=1
+#	echo $file
+#	stylint $file
+#	if [ $? -ne 0 ]; then
+#		is_there_error=1
+#		#exit 1 # exit with failure status
+#	fi
+#done
+
+#if [ $is_css_file = 1 ]; then
+#	echo
+#	echo "-------------- CSS END---------"
+#fi
+
+if [ $is_there_error = 1 ]; then
+	echo
+	exit 1 # exit with failure status
+fi
