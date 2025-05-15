@@ -23,7 +23,7 @@ Route::middleware(['throttle:only_five_visits'])->group(function () {
     Route::post('/upload-profile-image', [AuthController::class, 'uploadProfileImage'])->name('upload-profile-image');
     Route::get('/account-activation/{activation_token}', [AuthController::class, 'accountActivation'])->name("account-activation");
 });
-
+//email validation
 Route::post('/validate-user-email', [AuthController::class, 'validateUserEmail'])->name('validate-user-email');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
