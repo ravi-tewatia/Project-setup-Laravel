@@ -167,12 +167,6 @@ class AuthController extends ApiController
         }
     }
 
-    /**********************************************************
-     * method : Post
-     * api : login
-     * return : retuen header token if credentials match other wise throw error
-     * developer : Ravi Tewatia
-     **********************************************************/
     public function login(Request $request)
     {
         try {
@@ -362,14 +356,16 @@ class AuthController extends ApiController
             $requiredFields = [
                 'full_name' => 'required',
                 'phone' => ['required'],
-                'email' => ['required'],
+                'state' => ['required'],
+                'postal_code' => ['required'],
+                'email' => ['required', $unique],
             ];
             if (!$this->checkValidation($request, $requiredFields)) {
                 return validationResponse(Response::HTTP_UNPROCESSABLE_ENTITY, Lang::get('messages.VALIDATION_ERROR'), $this->errorMessage);
             }
             $return = $this->user->updateProfile($request, $id);
             return finalResponse($return);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             $result = [
                 'line' => $ex->getLine(),
                 'file' => $ex->getFile(),
@@ -378,24 +374,18 @@ class AuthController extends ApiController
         }
     }
 
-    /**********************************************************
-     * method : Post
-     * api : upload-profile-image
-     * return : upload image when selected and return name of that image.
-     * developer : Ravi Tewatia
-     **********************************************************/
     public function uploadProfileImage(Request $request)
     {
         try {
             $requiredFields = [
-                'profile_thumb' => 'required|mimes:jpeg,png,jpg',
+                'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ];
             if (!$this->checkValidation($request, $requiredFields)) {
                 return validationResponse(Response::HTTP_UNPROCESSABLE_ENTITY, Lang::get('messages.VALIDATION_ERROR'), $this->errorMessage);
             }
             $return = $this->user->uploadProfileImage($request);
             return finalResponse($return);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             $result = [
                 'line' => $ex->getLine(),
                 'file' => $ex->getFile(),
@@ -404,16 +394,10 @@ class AuthController extends ApiController
         }
     }
 
-    /**********************************************************
-     * method : Post
-     * api : logout
-     * return : delete auth token from personal_access_tokens table and logout.
-     * developer : Ravi Tewatia
-     **********************************************************/
     public function logout(Request $request)
     {
         try {
-            $return = $this->user->userLogout($request);
+            $return = $this->user->logout($request);
             return finalResponse($return);
         } catch (\Throwable $ex) {
             $result = [
@@ -424,17 +408,11 @@ class AuthController extends ApiController
         }
     }
 
-    /**********************************************************
-     * method : get
-     * api : get-blocked-user-list
-     * return : get blocked user list.
-     * developer : Ravi Tewatia
-     **********************************************************/
     public function getBlockedUserList(Request $request)
     {
         try {
-            $blockedUserList = AttemptFailed::getBlockedUserList($request);
-            return finalResponse($blockedUserList);
+            $return = $this->user->getBlockedUserList($request);
+            return finalResponse($return);
         } catch (\Throwable $ex) {
             $result = [
                 'line' => $ex->getLine(),
@@ -443,18 +421,18 @@ class AuthController extends ApiController
             return catchResponse(Response::HTTP_INTERNAL_SERVER_ERROR, $ex->getMessage(), $result);
         }
     }
-    /**********************************************************
-     * method : Post
-     * api : unblock-user
-     * return : unblocked user immidiatly
-     * developer : Ravi Tewatia
-     **********************************************************/
+
     public function unblockedUser(Request $request)
     {
         try {
-            $attemptFailed = new AttemptFailed;
-            $unblockUser = $attemptFailed->unblockedUser($request);
-            return finalResponse($unblockUser);
+            $requiredFields = [
+                'user_id' => 'required',
+            ];
+            if (!$this->checkValidation($request, $requiredFields)) {
+                return validationResponse(Response::HTTP_UNPROCESSABLE_ENTITY, Lang::get('messages.VALIDATION_ERROR'), $this->errorMessage);
+            }
+            $return = $this->user->unblockedUser($request);
+            return finalResponse($return);
         } catch (\Throwable $ex) {
             $result = [
                 'line' => $ex->getLine(),
