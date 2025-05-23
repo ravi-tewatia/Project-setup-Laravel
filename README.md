@@ -126,3 +126,224 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
 If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+
+# Laravel Base Project
+
+A Laravel project with Redis integration and authentication features.
+
+## Requirements
+
+- PHP >= 8.1
+- Composer
+- MySQL
+- Redis for Windows
+
+## Advanced Features
+
+### API Features
+- [x] JWT Authentication
+- [x] API Versioning
+- [x] Rate Limiting
+- [x] Request Validation
+- [x] API Documentation (Swagger/OpenAPI)
+- [x] API Response Transformer
+- [x] API Logging
+- [x] CORS Configuration
+- [x] API Throttling
+- [x] Request/Response Interceptors
+
+### Security Features
+- [x] Sanctum Authentication
+- [x] Email Verification
+- [x] Password Reset
+- [x] User Blocking System
+- [x] Two-Factor Authentication (2FA)
+- [x] IP Restriction
+- [x] API Key Management
+- [x] Role-Based Access Control (RBAC)
+- [x] Session Management
+- [x] Activity Logging
+
+### Performance Features
+- [x] Redis Caching
+- [x] Query Optimization
+- [x] Database Indexing
+- [x] Response Compression
+- [x] API Response Caching
+
+## Installation Steps
+
+1. **Clone the repository**
+```bash
+git clone [your-repository-url]
+cd [project-name]
+```
+
+2. **Install PHP dependencies**
+```bash
+composer install
+```
+
+3. **Environment Setup**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. **Configure Database**
+- Update `.env` file with your database credentials:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+5. **Install Redis for Windows**
+- Download Redis for Windows: [Redis-x64-3.0.504.msi](https://github.com/microsoftarchive/redis/releases/download/win-3.0.504/Redis-x64-3.0.504.msi)
+- Run the installer
+- Keep default settings during installation
+- Redis will be installed as a Windows service
+
+6. **Configure Redis in .env**
+```
+REDIS_CLIENT=predis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
+
+7. **Configure API Settings in .env**
+```
+API_DEBUG=true
+API_THROTTLE=60,1
+API_VERSION=v1
+API_PREFIX=api
+API_DOMAIN=api.yourdomain.com
+```
+
+8. **Run Migrations**
+```bash
+php artisan migrate
+```
+
+9. **Generate API Documentation**
+```bash
+php artisan l5-swagger:generate
+```
+
+10. **Start the Development Server**
+```bash
+php artisan serve
+```
+
+## API Structure
+
+### Versioning
+All API endpoints are versioned:
+```
+/api/v1/resource
+/api/v2/resource
+```
+
+### Authentication
+- JWT Token Authentication
+- API Key Authentication
+- OAuth2 Support (Optional)
+
+### Response Format
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Operation successful",
+    "data": {},
+    "meta": {
+        "pagination": {},
+        "timestamp": "2024-03-21T12:00:00Z"
+    }
+}
+```
+
+## API Endpoints
+
+### Authentication
+- POST `/api/v1/register` - Register new user
+- POST `/api/v1/login` - User login
+- POST `/api/v1/logout` - User logout (requires authentication)
+- POST `/api/v1/forgot-password` - Request password reset
+- POST `/api/v1/reset-password` - Reset password
+- POST `/api/v1/change-password` - Change password (requires authentication)
+- POST `/api/v1/2fa/enable` - Enable 2FA
+- POST `/api/v1/2fa/verify` - Verify 2FA
+
+### User Management
+- GET `/api/v1/profile` - Get user profile (requires authentication)
+- PUT `/api/v1/profile` - Update user profile (requires authentication)
+- GET `/api/v1/users` - Get list of users (requires authentication)
+- GET `/api/v1/users/blocked` - Get list of blocked users (requires authentication)
+- POST `/api/v1/users/{id}/block` - Block a user (requires authentication)
+- POST `/api/v1/users/{id}/unblock` - Unblock a user (requires authentication)
+- GET `/api/v1/users/sessions` - Get active sessions (requires authentication)
+- POST `/api/v1/users/sessions/{id}/logout` - Logout from specific session (requires authentication)
+
+### File Management
+- POST `/api/v1/upload` - Upload file
+- POST `/api/v1/submit` - Submit form with file
+- GET `/api/v1/files` - List uploaded files
+- DELETE `/api/v1/files/{id}` - Delete file
+
+### System
+- GET `/api/v1/health` - System health check
+- GET `/api/v1/status` - API status
+- GET `/api/v1/rate-limits` - Check rate limits
+
+## API Documentation
+Access the API documentation at:
+```
+http://your-domain/api/documentation
+```
+
+## Testing
+
+### Unit Tests
+```bash
+php artisan test
+```
+
+### API Tests
+```bash
+php artisan test --testsuite=Feature
+```
+
+### Performance Tests
+```bash
+php artisan test --testsuite=Performance
+```
+
+## Security Best Practices
+1. All API endpoints are rate-limited
+2. Sensitive data is encrypted
+3. API keys are rotated regularly
+4. All requests are logged
+5. CORS is properly configured
+6. Input validation is enforced
+7. SQL injection prevention
+8. XSS protection
+9. CSRF protection
+10. Regular security audits
+
+## Monitoring
+- API request/response logging
+- Error tracking
+- Performance monitoring
+- Rate limit monitoring
+- Security event logging
+
+## Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
